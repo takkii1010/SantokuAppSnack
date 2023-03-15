@@ -1,0 +1,62 @@
+import "Fastfile.build_santoku_app_ios"
+import "Fastfile.prebuild_santoku_app_ios"
+import "Fastfile.prebuild_santoku_app_android"
+
+################################################################################
+# DeployGateへのデプロイに関する注意点
+### Android App Bundle
+# DeployGateのAndroid App Bundleサポートには制限がありますが、Google Playにはaab形式でリリースする必要があるので、
+# DeployGateへのアップロードにもaab形式を利用します。
+#   https://intercom.help/deploygate/ja/articles/4536522
+# - 対象のアプリ（APK形式）が事前にアップロードされていて、アップロード鍵が設定されている必要があります
+# - Dynamic Delivery 等の App Bundle 特有の機能は動作しません
+# - 端末最適化された APKS の配布には対応していません
+################################################################################
+
+platform :ios do
+
+  desc "Prebuild SantokuApp Production Release"
+  lane :prebuild_prod do
+    prebuild_santoku_app_ios(environment: "prod")
+  end
+
+  desc "Prebuild SantokuApp Staging Release"
+  lane :prebuild_stg do
+    prebuild_santoku_app_ios(environment: "stg")
+  end
+
+  desc "Build SantokuApp Production Release"
+  lane :build_prod do
+    build_santoku_app_ios(environment: "prod")
+  end
+
+  desc "Build SantokuApp Staging Release"
+  lane :build_stg do
+    build_santoku_app_ios(environment: "stg")
+  end
+
+end
+
+platform :android do
+
+  desc "Prebuild SantokuApp Production Release"
+  lane :prebuild_prod do
+    prebuild_santoku_app_android(environment: "prod")
+  end
+
+  desc "Prebuild SantokuApp Staging Release"
+  lane :prebuild_stg do
+    prebuild_santoku_app_android(environment: "stg")
+  end
+
+  desc "Build SantokuApp Production Release"
+  lane :build_prod do
+    build_android_app(task: "bundle", build_type: "Release", project_dir: "android")
+  end
+
+  desc "Build SantokuApp Staging Release"
+  lane :build_stg do
+    build_android_app(task: "bundle", build_type: "Release", project_dir: "android")
+  end
+
+end
